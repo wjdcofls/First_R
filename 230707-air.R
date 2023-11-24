@@ -1,0 +1,28 @@
+# 맨 위에 라이브러리 모음 적어두기
+library(ggplot2)
+library(psych)
+library(car)
+
+
+# 파일 불러오기
+air = read.csv("air.csv", header = TRUE, col.names=c("날짜","분류","PM10"))
+View(air)
+
+#데이터 전처리
+air$재분류 = recode(air$PM10, "lo:10=1; 10:20=2; 20:30=3; 30:40=4; 40:hi=5")
+View(air)
+
+#재분류(순서형=ordered) 판정 값에 이름 주기
+air$재분류 = ordered(air$재분류, 1:5,
+                  labels=c("매우좋음", "좋음", "보통", "조금 안좋음", "안좋음"))
+View(air)
+
+
+#R에서 그래프 그리기
+table(air$재분류)
+barplot(table(air$재분류))
+barplot(table(air$재분류), col = c(4:5))
+
+#그래프 자세히 표현하기
+barplot(table(air$재분류), col = c(4:5), main ="순천시 공기질 데이터 재분류 (PM10)")
+t

@@ -1,0 +1,50 @@
+# 구하는 값이 뭐니? 그리고 주어진 값은 뭐니?
+# http://jupiter.hallym.ac.kr/ftpdata/data/bmi.txt\
+# 분석의 목적 : 다이어트 프로그램의 유무
+# 분석 프로세스
+
+# 1) 데이터 수집
+#   read.table()
+kkk = read.table(url("http://jupiter.hallym.ac.kr/ftpdata/data/bmi.txt"),
+                 col.names=c("키", "몸", "출생(year)", "종교", "성별(gender)", "결혼(marriage)"))
+# 데이터가 url에 있어서 read.table(url(주소))를 써줬고,
+#관측항목 이름이 없어서 col.names()으로 이름 만들어줌
+
+# 2) 데이터 전처리
+# 파생변수 (=데이터 마이닝 자료) 만들기
+kkk$키몸 = kkk$키 + kkk$몸
+View(kkk)
+# BMI 지수 만들기
+kkk$bmi = kkk$몸/(kkk$키/100)^2
+View(kkk)
+# BMI 판정 결과 파생변수 만들어주기
+install.packages("car")
+library(car)
+kkk$판정 = recode(kkk$bmi, "lo:18.5=1; 18.5:23=2; 23:25=3; 25:30=4; 30:hi=5")
+View(kkk)
+table(kkk$판정)
+# 종교(명목형=factor) 변수로 각 값에 이름주는 연습하기
+kkk$종교 = factor(kkk$종교, levels=c("Bu", "C1", "C2","No"),labels=c("불교", "개신교", "가톨릭", "무교"))
+View(kkk)
+# BMI(순서형=ordered) 판정 값에 이름 주기
+kkk$판정 <- ordered(kkk$판정,levels=seq(1,5),
+                  labels=c("저체중", "정상", "과체중", "초기비만", "비만"))
+
+View(kkk)
+
+# 3) 데이터 정제 확인
+
+# 4) 데이터 분석
+
+# 5) 데이터 시각화 (about 결론)
+
+# 6) 빈도 구하기
+table(kkk$판정)
+barplot(table(kkk$판정))  # 그래프 나타남
+barplot(table(kkk$판정),col = (3:4))  #col로 색깔 입히기
+# Plots -> Export -> Save as Image..로 저장하기
+
+#그래프 자세히 표현하기
+barplot(table(kkk$판정), col=c(3:4), main = "다이어트 현황",
+        sub = "순천대학교 학생 키와 몸무게를 바탕으로 만든 현황",
+        xlab = "등급", ylab = "인원", ylim = c(0,140))
